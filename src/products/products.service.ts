@@ -3,33 +3,37 @@ import { Injectable } from "@nestjs/common";
 export class productsService {
   
     private product =[
-     {
-      id: 1,
-      name: 'Laptop',
-      price: 55000,
-    },
-    {
-      id: 2,
-      name: 'Keyboard',
-      price: 1500,
-    },
-    {
-      id: 3,
-      name: 'Mouse',
-      price: 800,
-    },
-    {
-      id: 4,
-      name: 'Monitor',
-      price: 12000,
-    },
-    {
-      id: 5,
-      name: 'Headphones',
-      price: 2500,
-    },
-    ]
-
+  {
+    "userId": 1,
+    "id": 1,
+    "title": "Complete the project documentation",
+    "completed": false
+  },
+  {
+    "userId": 1,
+    "id": 2,
+    "title": "Review and respond to pending emails",
+    "completed": false
+  },
+  {
+    "userId": 1,
+    "id": 3,
+    "title": "Prepare presentation for the client meeting",
+    "completed": false
+  },
+  {
+    "userId": 1,
+    "id": 4,
+    "title": "Submit the weekly progress report",
+    "completed": true
+  },
+  {
+    "userId": 1,
+    "id": 5,
+    "title": "Fix authentication issue in the application",
+    "completed": false
+  }
+]
     getProduct(){
         return this.product;
     }
