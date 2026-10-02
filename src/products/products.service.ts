@@ -1,75 +1,59 @@
 import { Injectable } from "@nestjs/common";
 import { title } from "process";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { Product, ProductDocument } from "./schemas/product.schema";
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
+
 @Injectable()
 export class productsService {
-  
-    private product =[
-  {
-    "userId": 1,
-    "id": 1,
-    "title": "Complete the project documentation",
-    "completed": false
-  },
-  {
-    "userId": 1,
-    "id": 2,
-    "title": "Review and respond to pending emails",
-    "completed": false
-  },
-  {
-    "userId": 1,
-    "id": 3,
-    "title": "Prepare presentation for the client meeting",
-    "completed": false
-  },
-  {
-    "userId": 1,
-    "id": 4,
-    "title": "Submit the weekly progress report",
-    "completed": true
-  },
-  {
-    "userId": 1,
-    "id": 5,
-    "title": "Fix authentication issue in the application",
-    "completed": false
-  }
-]
-    getTasks(){
-        return this.product;
+  constructor(
+    @InjectModel(Product.name) private productModel: Model<ProductDocument>,
+) {}
+
+
+    async getTasks() {
+        return await this.productModel.find();
     }
 
-    getTask(id:Number){
-      const task = this.product.find(t => t.id === id)
+    async getTask(id:string){
+      const task = this.productModel.find({id:id})
       if(!task){
         return{message:"Task Not Found"}
       }
-        return task;
+        return await task;
     }
 
-    getTaskByStatus(status:string){
-      if(status === "completed"){
-        return this.product.filter(t => t.completed === true)
-      }
-      if(status === "pending"){
-        return this.product.filter(t => t.completed === false)
-      }
-        return this.product;
+    async  getTaskByStatus(status:string){
+      return await this.productModel.find({status:status})
     }
 
-    getTaskBySearch(search:string){
-      return this.product.filter(t => t.title.toLowerCase().includes(search.toLowerCase()))
+    async getTaskBySearch(search:string){
+      return this.productModel.find({
+        title:{$regex:search,$options:"i"}
+      })
     }
 
-    createTask(body:any){
-      const newTask = {
-        userId:body.userId,
-        id:this.product.length+1,
-        title:body.title,
-        completed:body.completed,
-      }
-      this.product.push(newTask)
-      return newTask
+    async getTaskByPriority(priority:string){
+      return await this.productModel.find({priority:priority})
+    }
+
+    async createTask(body: CreateProductDto) {
+        return this.productModel.create(body);
+    }
+
+
+    async updateTask(id: string, body: UpdateProductDto) {
+    return await this.productModel.findOneAndUpdate(
+        { id: id },
+        { $set: body },
+        { new: true }
+    );
+    }
+
+    async deleteTask(id: string) {
+    return await this.productModel.findOneAndDelete({ id: id });
     }
 
 }
